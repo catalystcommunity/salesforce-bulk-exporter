@@ -6,30 +6,26 @@ import (
 	"time"
 
 	sf "github.com/catalystsquad/salesforce-bulk-exporter/internal/salesforce"
-	"github.com/spf13/cobra"
+	"github.com/urfave/cli/v2"
 )
 
-// exportCmd represents the export command
-var exportCmd = &cobra.Command{
-	Use:   "export object_name",
-	Short: "Exports all data from an object",
-	Args:  cobra.ExactArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		// cobra should require just one argument, so hardcode the index reference
-		object := args[0]
-		// initialize the salesforce utils client
-		err := sf.InitSFClient(
-			config.baseURL,
-			config.apiVersion,
-			config.clientID,
-			config.clientSecret,
-			config.username,
-			config.password,
-			config.grantType,
-		)
+var ExportCommand = &cli.Command{
+	Name:      "export",
+	Usage:     "Exports data from Salesforce",
+	Args:      true,
+	ArgsUsage: "object",
+	Flags:     exportFlags,
+	Action: func(ctx *cli.Context) error {
+		if ctx.NArg() != 1 {
+			return fmt.Errorf("expected exactly one argument, got %d", ctx.NArg())
+		}
+		object := ctx.Args().First()
+
+		err := sf.InitSFClient()
 		if err != nil {
 			return err
 		}
+
 		// generate the query to use in the job
 		var query string
 		if len(exportCmdFields) == 0 {
@@ -47,6 +43,7 @@ var exportCmd = &cobra.Command{
 			return err
 		}
 		fmt.Printf("Submitted bulk query job with ID: %s\n", jobID)
+
 		// wait for completion
 		if exportCmdDownload {
 			err = sf.WaitUntilJobComplete(jobID, exportCmdWaitInterval)
@@ -66,17 +63,50 @@ var exportCmd = &cobra.Command{
 var (
 	exportCmdDownload     bool
 	exportCmdWaitInterval time.Duration
+	exportCmdFieldsCli    *cli.StringSlice
 	exportCmdFields       []string
 	exportCmdFilePrefix   string
 	exportCmdFileExt      string
 )
 
-func init() {
-	rootCmd.AddCommand(exportCmd)
-
-	exportCmd.Flags().BoolVarP(&exportCmdDownload, "download", "w", false, "Wait for the job to complete and download")
-	exportCmd.Flags().DurationVarP(&exportCmdWaitInterval, "wait-interval", "i", 10*time.Second, "Time to wait in between polls of job status")
-	exportCmd.Flags().StringSliceVar(&exportCmdFields, "fields", []string{}, "Specify which fields to export, by default all fields are discovered")
-	exportCmd.Flags().StringVarP(&exportCmdFilePrefix, "filename-prefix", "f", "export", "Filename prefix for the downloaded files from Salesforce")
-	exportCmd.Flags().StringVarP(&exportCmdFileExt, "file-extension", "e", "csv", "Filename extension for the downloaded files from Salesforce")
+var exportFlags = []cli.Flag{
+	&cli.BoolFlag{
+		Name:        "download",
+		Aliases:     []string{"w"},
+		Usage:       "Wait for the job to complete and download",
+		EnvVars:     []string{"EXPORT_DOWNLOAD"},
+		Value:       false,
+		Destination: &exportCmdDownload,
+	},
+	&cli.DurationFlag{
+		Name:        "wait-interval",
+		Aliases:     []string{"i"},
+		Usage:       "Time to wait in between polls of job status",
+		EnvVars:     []string{"EXPORT_WAIT_INTERVAL"},
+		Value:       10 * time.Second,
+		Destination: &exportCmdWaitInterval,
+	},
+	&cli.StringSliceFlag{
+		Name:        "fields",
+		Usage:       "Which fields to export, by default all fields are discovered",
+		EnvVars:     []string{"EXPORT_FIELDS"},
+		Value:       nil,
+		Destination: exportCmdFieldsCli,
+	},
+	&cli.StringFlag{
+		Name:        "filename-prefix",
+		Aliases:     []string{"f"},
+		Usage:       "Filename prefix for the downloaded files from Salesforce",
+		EnvVars:     []string{"EXPORT_FILENAME_PREFIX"},
+		Value:       "export",
+		Destination: &exportCmdFilePrefix,
+	},
+	&cli.StringFlag{
+		Name:        "file-extension",
+		Aliases:     []string{"e"},
+		Usage:       "Filename extension for the downloaded files from Salesforce",
+		EnvVars:     []string{"EXPORT_FILE_EXTENSION"},
+		Value:       "csv",
+		Destination: &exportCmdFileExt,
+	},
 }

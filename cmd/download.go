@@ -6,30 +6,26 @@ import (
 	"time"
 
 	sf "github.com/catalystsquad/salesforce-bulk-exporter/internal/salesforce"
-	"github.com/spf13/cobra"
+	"github.com/urfave/cli/v2"
 )
 
-// downloadCmd represents the download command
-var downloadCmd = &cobra.Command{
-	Use:   "download job_id",
-	Short: "Downloads the results of a bulk job",
-	Args:  cobra.ExactArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		// cobra should require just one argument, so hardcode the index reference
-		jobID := args[0]
-		// initialize the salesforce utils client
-		err := sf.InitSFClient(
-			config.baseURL,
-			config.apiVersion,
-			config.clientID,
-			config.clientSecret,
-			config.username,
-			config.password,
-			config.grantType,
-		)
+var DownloadCommand = &cli.Command{
+	Name:      "download",
+	Usage:     "Downloads the results of a bulk job",
+	Args:      true,
+	ArgsUsage: " job_id",
+	Flags:     downloadFlags,
+	Action: func(ctx *cli.Context) error {
+		if ctx.NArg() != 1 {
+			return fmt.Errorf("expected exactly one argument, got %d", ctx.NArg())
+		}
+		jobID := ctx.Args().First()
+
+		err := sf.InitSFClient()
 		if err != nil {
 			return err
 		}
+
 		// check if or wait until job is done
 		if downloadCmdWait {
 			err = sf.WaitUntilJobComplete(jobID, downloadCmdWaitInterval)
@@ -45,6 +41,7 @@ var downloadCmd = &cobra.Command{
 				return fmt.Errorf("Job not complete, current state is: %s\n", state)
 			}
 		}
+
 		// download files
 		filenames, err := sf.SaveAllResults(jobID, downloadCmdFilePrefix, downloadCmdFileExt)
 		if err != nil {
@@ -62,11 +59,32 @@ var (
 	downloadCmdFileExt      string
 )
 
-func init() {
-	rootCmd.AddCommand(downloadCmd)
-
-	downloadCmd.Flags().BoolVarP(&downloadCmdWait, "wait", "w", false, "Wait for the job to complete")
-	downloadCmd.Flags().DurationVarP(&downloadCmdWaitInterval, "wait-interval", "i", 10*time.Second, "Time to wait in between polls of job status")
-	downloadCmd.Flags().StringVarP(&downloadCmdFilePrefix, "filename-prefix", "f", "export", "Filename prefix for the downloaded files from Salesforce")
-	downloadCmd.Flags().StringVarP(&downloadCmdFileExt, "file-extension", "e", "csv", "Filename extension for the downloaded files from Salesforce")
+var downloadFlags = []cli.Flag{
+	&cli.BoolFlag{
+		Name:        "wait",
+		Aliases:     []string{"w"},
+		Usage:       "Wait for the job to complete",
+		Destination: &downloadCmdWait,
+	},
+	&cli.DurationFlag{
+		Name:        "wait-interval",
+		Aliases:     []string{"i"},
+		Usage:       "Time to wait in between polls of job status",
+		Value:       10 * time.Second,
+		Destination: &downloadCmdWaitInterval,
+	},
+	&cli.StringFlag{
+		Name:        "filename-prefix",
+		Aliases:     []string{"f"},
+		Usage:       "Filename prefix for the downloaded files from Salesforce",
+		Value:       "export",
+		Destination: &downloadCmdFilePrefix,
+	},
+	&cli.StringFlag{
+		Name:        "file-extension",
+		Aliases:     []string{"e"},
+		Usage:       "Filename extension for the downloaded files from Salesforce",
+		Value:       "csv",
+		Destination: &downloadCmdFileExt,
+	},
 }

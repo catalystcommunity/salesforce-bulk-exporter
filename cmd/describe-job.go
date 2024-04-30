@@ -5,25 +5,21 @@ import (
 
 	sf "github.com/catalystsquad/salesforce-bulk-exporter/internal/salesforce"
 	"github.com/jedib0t/go-pretty/v6/table"
-	"github.com/spf13/cobra"
+	"github.com/urfave/cli/v2"
 )
 
-// describeJobCmd represents the describeJob command
-var describeJobCmd = &cobra.Command{
-	Use:  "describe-job job_id",
-	Args: cobra.ExactArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		jobID := args[0]
-		// initialize the salesforce utils client
-		err := sf.InitSFClient(
-			config.baseURL,
-			config.apiVersion,
-			config.clientID,
-			config.clientSecret,
-			config.username,
-			config.password,
-			config.grantType,
-		)
+var DescribeJobCommand = &cli.Command{
+	Name:      "describe-job",
+	Usage:     "Describes a bulk job",
+	Args:      true,
+	ArgsUsage: " job_id",
+	Action: func(ctx *cli.Context) error {
+		if ctx.NArg() != 1 {
+			return cli.Exit("expected exactly one argument, got %d", 1)
+		}
+		jobID := ctx.Args().First()
+
+		err := sf.InitSFClient()
 		if err != nil {
 			return err
 		}
@@ -58,8 +54,4 @@ var describeJobCmd = &cobra.Command{
 
 		return nil
 	},
-}
-
-func init() {
-	rootCmd.AddCommand(describeJobCmd)
 }

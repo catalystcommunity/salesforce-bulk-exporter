@@ -12,23 +12,23 @@ import (
 	"github.com/joomcode/errorx"
 )
 
-var componentTypes = []string{"address", "location"}
 var sfClient *sfutils.SalesforceUtils
 
-func InitSFClient(url, apiVersion, clientID, clientSecret, username, password, grantType string) (err error) {
+func InitSFClient() error {
+	var err error
 	sfClient, err = sfutils.NewSalesforceUtils(true, sfutils.Config{
-		BaseUrl:      url,
-		ApiVersion:   apiVersion,
-		ClientId:     clientID,
-		ClientSecret: clientSecret,
-		Username:     username,
-		Password:     password,
-		GrantType:    grantType,
+		BaseUrl:      BaseUrl,
+		ApiVersion:   ApiVersion,
+		ClientId:     ClientId,
+		ClientSecret: ClientSecret,
+		Username:     Username,
+		Password:     Password,
+		GrantType:    GrantType,
 	})
 	if err != nil {
-		err = errorx.Decorate(err, "failed to create new salesforce utils")
+		return errorx.Decorate(err, "failed to create new salesforce utils")
 	}
-	return
+	return nil
 }
 
 func GenerateQueryWithAllFields(object string) (string, error) {
@@ -50,6 +50,8 @@ func GenerateQueryWithAllFields(object string) (string, error) {
 	query := fmt.Sprintf("SELECT %s FROM %s", fieldsBuilder.String(), object)
 	return query, nil
 }
+
+var componentTypes = []string{"address", "location"}
 
 func isComponentType(sfType string) bool {
 	for i := range componentTypes {
@@ -106,13 +108,13 @@ func CheckIfJobComplete(jobID string) (complete bool, state string, err error) {
 	resp, err := sfClient.GetBulkQueryJob(jobID)
 	if err != nil {
 		err = errorx.Decorate(err, "failed to get job information")
-		return
+		return false, "", err
 	}
 	state = resp.State
 	if state == "JobComplete" {
 		complete = true
 	}
-	return
+	return complete, state, nil
 }
 
 func SaveAllResults(jobID, filenamePrefix, filenameExtension string) ([]string, error) {
@@ -160,9 +162,7 @@ func GetAllBulkJobs() ([]sfutils.BulkJobRecord, error) {
 	if err != nil {
 		return nil, err
 	}
-	for _, v := range resp.Records {
-		records = append(records, v)
-	}
+	records = append(records, resp.Records...)
 
 	nextRecordsURL := resp.NextRecordsUrl
 	for {
@@ -191,7 +191,6 @@ func GetAllBulkJobs() ([]sfutils.BulkJobRecord, error) {
 	}
 }
 
-func GetBulkJob(id string) (response sfutils.BulkJobRecord, err error) {
-	response, err = sfClient.GetBulkQueryJob(id)
-	return
+func GetBulkJob(id string) (sfutils.BulkJobRecord, error) {
+	return sfClient.GetBulkQueryJob(id)
 }
