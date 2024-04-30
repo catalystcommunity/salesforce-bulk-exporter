@@ -35,9 +35,9 @@ var listJobsCmd = &cobra.Command{
 		// list all jobs in a nice table
 		t := table.NewWriter()
 		t.SetOutputMirror(os.Stdout)
-		t.AppendHeader(table.Row{"ID", "Object", "State", "SystemModstamp"})
+		t.AppendHeader(table.Row{"ID", "Object", "Operation", "State", "SystemModstamp", "CreatedByID"})
 		for _, job := range jobs {
-			t.AppendRow(table.Row{job.ID, job.Object, job.State, job.SystemModstamp})
+			t.AppendRow(table.Row{job.ID, job.Object, job.Operation, job.State, job.SystemModstamp, job.CreatedById})
 		}
 		t.Render()
 

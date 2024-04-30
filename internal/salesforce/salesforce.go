@@ -1,6 +1,7 @@
 package salesforce
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -175,12 +176,22 @@ func GetAllBulkJobs() ([]sfutils.BulkJobRecord, error) {
 		}
 
 		for _, v := range nextRecordResp.Records {
-			record, ok := v.(sfutils.BulkJobRecord)
-			if !ok {
-				return nil, errors.New("error asserting bulk job record result to BulkJobRecord type")
+			recordJSON, err := json.Marshal(v)
+			if err != nil {
+				return nil, err
+			}
+			var record sfutils.BulkJobRecord
+			err = json.Unmarshal(recordJSON, &record)
+			if err != nil {
+				return nil, err
 			}
 			records = append(records, record)
 		}
 		nextRecordsURL = nextRecordResp.NextRecordsUrl
 	}
+}
+
+func GetBulkJob(id string) (response sfutils.BulkJobRecord, err error) {
+	response, err = sfClient.GetBulkQueryJob(id)
+	return
 }
