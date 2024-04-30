@@ -29,9 +29,6 @@ func initConfig() error {
 		return err
 	}
 
-	fmt.Printf("original config: %+v\n", Config)
-	fmt.Printf("read config: %+v\n", readConfig)
-
 	if readConfig != nil {
 		overrideUnsetConfigValuesFromReadConfig(readConfig)
 	}
