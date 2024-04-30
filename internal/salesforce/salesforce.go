@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -138,6 +139,7 @@ func SaveAllResults(jobID, filenamePrefix, filenameExtension string) ([]string, 
 		if err != nil {
 			return nil, err
 		}
+		log.Printf("saved %d records to file: %s\n", resultResp.NumberOfRecords, filename)
 
 		if resultResp.Locator == "" {
 			return filenames, nil

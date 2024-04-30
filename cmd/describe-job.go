@@ -16,6 +16,7 @@ var DescribeJobCommand = &cli.Command{
 	ArgsUsage: " job_id",
 	Action: func(ctx *cli.Context) error {
 		if ctx.NArg() != 1 {
+			_ = cli.ShowCommandHelp(ctx, "describe-job")
 			return cli.Exit("expected exactly one argument, got %d", 1)
 		}
 		jobID := ctx.Args().First()

@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	sf "github.com/catalystsquad/salesforce-bulk-exporter/internal/salesforce"
@@ -17,6 +16,7 @@ var DownloadCommand = &cli.Command{
 	Flags:     downloadFlags,
 	Action: func(ctx *cli.Context) error {
 		if ctx.NArg() != 1 {
+			_ = cli.ShowCommandHelp(ctx, "download")
 			return fmt.Errorf("expected exactly one argument, got %d", ctx.NArg())
 		}
 		jobID := ctx.Args().First()
@@ -47,7 +47,7 @@ var DownloadCommand = &cli.Command{
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Saved export to files: %s\n", strings.Join(filenames[:], ","))
+		fmt.Printf("Completed download, saved to %d files\n", len(filenames))
 		return nil
 	},
 }

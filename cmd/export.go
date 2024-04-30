@@ -17,6 +17,7 @@ var ExportCommand = &cli.Command{
 	Flags:     exportFlags,
 	Action: func(ctx *cli.Context) error {
 		if ctx.NArg() != 1 {
+			_ = cli.ShowCommandHelp(ctx, "export")
 			return fmt.Errorf("expected exactly one argument, got %d", ctx.NArg())
 		}
 		object := ctx.Args().First()
@@ -28,13 +29,14 @@ var ExportCommand = &cli.Command{
 
 		// generate the query to use in the job
 		var query string
-		if len(exportCmdFields) == 0 {
+		exportFields := exportCmdFieldsCli.Value()
+		if len(exportFields) == 0 {
 			query, err = sf.GenerateQueryWithAllFields(object)
 			if err != nil {
 				return err
 			}
 		} else {
-			query = fmt.Sprintf("SELECT %s FROM %s", strings.Join(exportCmdFields[:], ", "), object)
+			query = fmt.Sprintf("SELECT %s FROM %s", strings.Join(exportFields[:], ", "), object)
 		}
 
 		// submit the query
@@ -50,11 +52,12 @@ var ExportCommand = &cli.Command{
 			if err != nil {
 				return err
 			}
+			fmt.Println("Job completed, beginning download...")
 			filenames, err := sf.SaveAllResults(jobID, exportCmdFilePrefix, exportCmdFileExt)
 			if err != nil {
 				return err
 			}
-			fmt.Printf("Saved export to files: %s\n", strings.Join(filenames[:], ","))
+			fmt.Printf("Completed download, saved to %d files\n", len(filenames))
 		}
 		return nil
 	},
@@ -64,14 +67,13 @@ var (
 	exportCmdDownload     bool
 	exportCmdWaitInterval time.Duration
 	exportCmdFieldsCli    *cli.StringSlice
-	exportCmdFields       []string
 	exportCmdFilePrefix   string
 	exportCmdFileExt      string
 )
 
 var exportFlags = []cli.Flag{
 	&cli.BoolFlag{
-		Name:        "download",
+		Name:        "wait",
 		Aliases:     []string{"w"},
 		Usage:       "Wait for the job to complete and download",
 		EnvVars:     []string{"EXPORT_DOWNLOAD"},
