@@ -10,6 +10,7 @@ import (
 
 var DescribeJobCommand = &cli.Command{
 	Name:      "describe-job",
+	Aliases:   []string{"describe"},
 	Usage:     "Describes a bulk job",
 	Args:      true,
 	ArgsUsage: " job_id",

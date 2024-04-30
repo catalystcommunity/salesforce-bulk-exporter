@@ -11,7 +11,7 @@ import (
 
 var ExportCommand = &cli.Command{
 	Name:      "export",
-	Usage:     "Exports data from Salesforce",
+	Usage:     "Exports all object records from Salesforce",
 	Args:      true,
 	ArgsUsage: "object",
 	Flags:     exportFlags,

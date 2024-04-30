@@ -15,19 +15,24 @@ import (
 var sfClient *sfutils.SalesforceUtils
 
 func InitSFClient() error {
-	var err error
+	err := initConfig()
+	if err != nil {
+		return err
+	}
+
 	sfClient, err = sfutils.NewSalesforceUtils(true, sfutils.Config{
-		BaseUrl:      BaseUrl,
-		ApiVersion:   ApiVersion,
-		ClientId:     ClientId,
-		ClientSecret: ClientSecret,
-		Username:     Username,
-		Password:     Password,
-		GrantType:    GrantType,
+		BaseUrl:      Config.BaseUrl,
+		ApiVersion:   Config.ApiVersion,
+		ClientId:     Config.ClientId,
+		ClientSecret: Config.ClientSecret,
+		Username:     Config.Username,
+		Password:     Config.Password,
+		GrantType:    Config.GrantType,
 	})
 	if err != nil {
 		return errorx.Decorate(err, "failed to create new salesforce utils")
 	}
+
 	return nil
 }
 

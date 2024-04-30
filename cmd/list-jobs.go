@@ -9,8 +9,9 @@ import (
 )
 
 var ListJobsCommand = &cli.Command{
-	Name:  "list-jobs",
-	Usage: "List current bulk jobs",
+	Name:    "list-jobs",
+	Aliases: []string{"list"},
+	Usage:   "List current bulk jobs",
 	Action: func(ctx *cli.Context) error {
 		err := sf.InitSFClient()
 		if err != nil {

@@ -22,12 +22,47 @@ func main() {
 		},
 		Flags: []cli.Flag{
 			&cli.StringFlag{
+				Name:        "config",
+				Usage:       "config file (default is $HOME/.salesforce-bulk-exporter.yaml)",
+				Aliases:     []string{"c"},
+				EnvVars:     []string{"SALESFORCE_BULK_EXPORTER_CONFIG"},
+				Destination: &salesforce.ConfigFilePath,
+			},
+
+			&cli.StringFlag{
 				Name:        "base-url",
 				Usage:       "salesforce base url",
 				EnvVars:     []string{"SALESFORCE_BASE_URL"},
 				Category:    "salesforce",
-				Destination: &salesforce.BaseUrl,
-				Required:    true,
+				Destination: &salesforce.Config.BaseUrl,
+			},
+			&cli.StringFlag{
+				Name:        "client-id",
+				Usage:       "salesforce client id",
+				EnvVars:     []string{"SALESFORCE_CLIENT_ID"},
+				Category:    "salesforce",
+				Destination: &salesforce.Config.ClientId,
+			},
+			&cli.StringFlag{
+				Name:        "client-secret",
+				Usage:       "salesforce client secret",
+				EnvVars:     []string{"SALESFORCE_CLIENT_SECRET"},
+				Category:    "salesforce",
+				Destination: &salesforce.Config.ClientSecret,
+			},
+			&cli.StringFlag{
+				Name:        "username",
+				Usage:       "salesforce username",
+				EnvVars:     []string{"SALESFORCE_USERNAME"},
+				Category:    "salesforce",
+				Destination: &salesforce.Config.Username,
+			},
+			&cli.StringFlag{
+				Name:        "password",
+				Usage:       "salesforce password",
+				EnvVars:     []string{"SALESFORCE_PASSWORD"},
+				Category:    "salesforce",
+				Destination: &salesforce.Config.Password,
 			},
 			&cli.StringFlag{
 				Name:        "api-version",
@@ -35,39 +70,7 @@ func main() {
 				Usage:       "salesforce api version",
 				EnvVars:     []string{"SALESFORCE_API_VERSION"},
 				Category:    "salesforce",
-				Destination: &salesforce.ApiVersion,
-			},
-			&cli.StringFlag{
-				Name:        "client-id",
-				Usage:       "salesforce client id",
-				EnvVars:     []string{"SALESFORCE_CLIENT_ID"},
-				Category:    "salesforce",
-				Destination: &salesforce.ClientId,
-				Required:    true,
-			},
-			&cli.StringFlag{
-				Name:        "client-secret",
-				Usage:       "salesforce client secret",
-				EnvVars:     []string{"SALESFORCE_CLIENT_SECRET"},
-				Category:    "salesforce",
-				Destination: &salesforce.ClientSecret,
-				Required:    true,
-			},
-			&cli.StringFlag{
-				Name:        "username",
-				Usage:       "salesforce username",
-				EnvVars:     []string{"SALESFORCE_USERNAME"},
-				Category:    "salesforce",
-				Destination: &salesforce.Username,
-				Required:    true,
-			},
-			&cli.StringFlag{
-				Name:        "password",
-				Usage:       "salesforce password",
-				EnvVars:     []string{"SALESFORCE_PASSWORD"},
-				Category:    "salesforce",
-				Destination: &salesforce.Password,
-				Required:    true,
+				Destination: &salesforce.Config.ApiVersion,
 			},
 			&cli.StringFlag{
 				Name:        "grant-type",
@@ -75,10 +78,11 @@ func main() {
 				Usage:       "salesforce grant type",
 				EnvVars:     []string{"SALESFORCE_GRANT_TYPE"},
 				Category:    "salesforce",
-				Destination: &salesforce.GrantType,
+				Destination: &salesforce.Config.GrantType,
 			},
 		},
 	}
+
 	err := app.Run(os.Args)
 	if err != nil {
 		fmt.Println(err)
