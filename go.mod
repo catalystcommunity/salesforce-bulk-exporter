@@ -1,6 +1,6 @@
 module github.com/catalystsquad/salesforce-bulk-exporter
 
-go 1.18
+go 1.22
 
 require (
 	github.com/catalystsquad/salesforce-utils v1.2.1
