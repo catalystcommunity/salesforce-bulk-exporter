@@ -1,3 +1,10 @@
+# 1.0.0 (2024-05-01)
+
+
+### Bug Fixes
+
+* init project ([#6](https://github.com/catalystsquad/salesforce-bulk-exporter/issues/6)) ([9fc927e](https://github.com/catalystsquad/salesforce-bulk-exporter/commit/9fc927ea116f42206cc578a4d3035b76269cb014))
+
 # 1.0.0 (2022-06-07)
 
 
