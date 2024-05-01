@@ -13,7 +13,7 @@ var ExportCommand = &cli.Command{
 	Name:      "export",
 	Usage:     "Exports all object records from Salesforce",
 	Args:      true,
-	ArgsUsage: "object",
+	ArgsUsage: " object",
 	Flags:     exportFlags,
 	Action: func(ctx *cli.Context) error {
 		if ctx.NArg() != 1 {
@@ -29,7 +29,10 @@ var ExportCommand = &cli.Command{
 
 		// generate the query to use in the job
 		var query string
-		exportFields := exportCmdFieldsCli.Value()
+		var exportFields []string
+		if exportCmdFieldsCli != nil {
+			exportFields = exportCmdFieldsCli.Value()
+		}
 		if len(exportFields) == 0 {
 			query, err = sf.GenerateQueryWithAllFields(object)
 			if err != nil {
@@ -40,7 +43,7 @@ var ExportCommand = &cli.Command{
 		}
 
 		// submit the query
-		jobID, err := sf.SubmitBulkQueryJob(query)
+		jobID, err := sf.SubmitBulkQueryJob(query, exportCmdIncludeArchived)
 		if err != nil {
 			return err
 		}
@@ -64,11 +67,12 @@ var ExportCommand = &cli.Command{
 }
 
 var (
-	exportCmdDownload     bool
-	exportCmdWaitInterval time.Duration
-	exportCmdFieldsCli    *cli.StringSlice
-	exportCmdFilePrefix   string
-	exportCmdFileExt      string
+	exportCmdDownload        bool
+	exportCmdWaitInterval    time.Duration
+	exportCmdFieldsCli       *cli.StringSlice
+	exportCmdFilePrefix      string
+	exportCmdFileExt         string
+	exportCmdIncludeArchived bool
 )
 
 var exportFlags = []cli.Flag{
@@ -110,5 +114,13 @@ var exportFlags = []cli.Flag{
 		EnvVars:     []string{"EXPORT_FILE_EXTENSION"},
 		Value:       "csv",
 		Destination: &exportCmdFileExt,
+	},
+	&cli.BoolFlag{
+		Name:        "include-archived",
+		Aliases:     []string{"a"},
+		Usage:       "Include archived records in the export",
+		EnvVars:     []string{"EXPORT_INCLUDE_ARCHIVED"},
+		Value:       false,
+		Destination: &exportCmdIncludeArchived,
 	},
 }

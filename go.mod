@@ -3,7 +3,7 @@ module github.com/catalystsquad/salesforce-bulk-exporter
 go 1.18
 
 require (
-	github.com/catalystsquad/salesforce-utils v1.2.0
+	github.com/catalystsquad/salesforce-utils v1.2.1
 	github.com/jedib0t/go-pretty/v6 v6.5.8
 	github.com/joomcode/errorx v1.1.1
 	github.com/urfave/cli/v2 v2.27.2

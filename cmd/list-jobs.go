@@ -32,6 +32,7 @@ var ListJobsCommand = &cli.Command{
 				job.ID, job.Object, job.Operation, job.State, job.SystemModstamp, job.CreatedById,
 			})
 		}
+		t.SortBy([]table.SortBy{{Name: "SystemModstamp"}})
 		t.Render()
 
 		return nil

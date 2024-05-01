@@ -1,7 +1,6 @@
 package salesforce
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -68,8 +67,14 @@ func isComponentType(sfType string) bool {
 	return false
 }
 
-func SubmitBulkQueryJob(query string) (string, error) {
-	resp, err := sfClient.CreateBulkQueryJob(query)
+func SubmitBulkQueryJob(query string, includeArchived bool) (string, error) {
+	var resp sfutils.BulkJobRecord
+	var err error
+	if includeArchived {
+		resp, err = sfClient.CreateBulkQueryAllJob(query)
+	} else {
+		resp, err = sfClient.CreateBulkQueryJob(query)
+	}
 	if err != nil {
 		return "", err
 	}
@@ -133,7 +138,7 @@ func SaveAllResults(jobID, filenamePrefix, filenameExtension string) ([]string, 
 			return nil, err
 		}
 
-		filename := fmt.Sprintf("%s.%d.%s", filenamePrefix, fileIterator, filenameExtension)
+		filename := fmt.Sprintf("%s.03%d.%s", filenamePrefix, fileIterator, filenameExtension)
 		filenames = append(filenames, filename)
 		err = writeBytesToFile(filename, resultResp.Body)
 		if err != nil {
@@ -183,14 +188,9 @@ func GetAllBulkJobs() ([]sfutils.BulkJobRecord, error) {
 		}
 
 		for _, v := range nextRecordResp.Records {
-			recordJSON, err := json.Marshal(v)
-			if err != nil {
-				return nil, err
-			}
-			var record sfutils.BulkJobRecord
-			err = json.Unmarshal(recordJSON, &record)
-			if err != nil {
-				return nil, err
+			record, ok := v.(sfutils.BulkJobRecord)
+			if !ok {
+				return nil, errors.New("failed to convert record to BulkJobRecord")
 			}
 			records = append(records, record)
 		}
