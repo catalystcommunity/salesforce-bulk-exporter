@@ -9,6 +9,10 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+const (
+	SalesforceCategory = "Salesforce API Auth"
+)
+
 func main() {
 	app := &cli.App{
 		Name:    "salesforce-bulk-exporter",
@@ -33,35 +37,35 @@ func main() {
 				Name:        "base-url",
 				Usage:       "salesforce base url",
 				EnvVars:     []string{"SALESFORCE_BASE_URL"},
-				Category:    "salesforce",
+				Category:    SalesforceCategory,
 				Destination: &salesforce.Config.BaseUrl,
 			},
 			&cli.StringFlag{
 				Name:        "client-id",
 				Usage:       "salesforce client id",
 				EnvVars:     []string{"SALESFORCE_CLIENT_ID"},
-				Category:    "salesforce",
+				Category:    SalesforceCategory,
 				Destination: &salesforce.Config.ClientId,
 			},
 			&cli.StringFlag{
 				Name:        "client-secret",
 				Usage:       "salesforce client secret",
 				EnvVars:     []string{"SALESFORCE_CLIENT_SECRET"},
-				Category:    "salesforce",
+				Category:    SalesforceCategory,
 				Destination: &salesforce.Config.ClientSecret,
 			},
 			&cli.StringFlag{
 				Name:        "username",
 				Usage:       "salesforce username",
 				EnvVars:     []string{"SALESFORCE_USERNAME"},
-				Category:    "salesforce",
+				Category:    SalesforceCategory,
 				Destination: &salesforce.Config.Username,
 			},
 			&cli.StringFlag{
 				Name:        "password",
 				Usage:       "salesforce password",
 				EnvVars:     []string{"SALESFORCE_PASSWORD"},
-				Category:    "salesforce",
+				Category:    SalesforceCategory,
 				Destination: &salesforce.Config.Password,
 			},
 			&cli.StringFlag{
@@ -69,7 +73,7 @@ func main() {
 				Value:       "55.0",
 				Usage:       "salesforce api version",
 				EnvVars:     []string{"SALESFORCE_API_VERSION"},
-				Category:    "salesforce",
+				Category:    SalesforceCategory,
 				Destination: &salesforce.Config.ApiVersion,
 			},
 			&cli.StringFlag{
@@ -77,7 +81,7 @@ func main() {
 				Value:       "password",
 				Usage:       "salesforce grant type",
 				EnvVars:     []string{"SALESFORCE_GRANT_TYPE"},
-				Category:    "salesforce",
+				Category:    SalesforceCategory,
 				Destination: &salesforce.Config.GrantType,
 			},
 		},
