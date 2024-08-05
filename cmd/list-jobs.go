@@ -3,7 +3,7 @@ package cmd
 import (
 	"os"
 
-	sf "github.com/catalystsquad/salesforce-bulk-exporter/internal/salesforce"
+	sf "github.com/catalystcommunity/salesforce-bulk-exporter/internal/salesforce"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/urfave/cli/v2"
 )

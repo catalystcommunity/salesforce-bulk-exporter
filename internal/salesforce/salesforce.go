@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	sfutils "github.com/catalystsquad/salesforce-utils/pkg"
+	sfutils "github.com/catalystcommunity/salesforce-utils/pkg"
 	"github.com/joomcode/errorx"
 )
 

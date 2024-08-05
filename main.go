@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/catalystsquad/salesforce-bulk-exporter/cmd"
-	"github.com/catalystsquad/salesforce-bulk-exporter/internal/salesforce"
+	"github.com/catalystcommunity/salesforce-bulk-exporter/cmd"
+	"github.com/catalystcommunity/salesforce-bulk-exporter/internal/salesforce"
 	"github.com/urfave/cli/v2"
 )
 

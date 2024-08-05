@@ -1,9 +1,9 @@
-module github.com/catalystsquad/salesforce-bulk-exporter
+module github.com/catalystcommunity/salesforce-bulk-exporter
 
 go 1.22
 
 require (
-	github.com/catalystsquad/salesforce-utils v1.2.1
+	github.com/catalystcommunity/salesforce-utils v1.2.1
 	github.com/jedib0t/go-pretty/v6 v6.5.8
 	github.com/joomcode/errorx v1.1.1
 	github.com/urfave/cli/v2 v2.27.2
@@ -13,7 +13,7 @@ require (
 require (
 	github.com/andybalholm/brotli v1.1.0 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
-	github.com/catalystsquad/app-utils-go v1.0.7 // indirect
+	github.com/catalystcommunity/app-utils-go v1.0.7 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/klauspost/compress v1.17.8 // indirect

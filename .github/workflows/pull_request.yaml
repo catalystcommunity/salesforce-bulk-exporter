@@ -14,13 +14,13 @@ jobs:
     name: Validate Conventional Commits PR
     runs-on: ubuntu-latest
     steps:
-      - uses: catalystsquad/action-validate-conventional-commits-pr@v1
+      - uses: catalystcommunity/action-validate-conventional-commits-pr@v1
   ensure-compile:
     if: github.event.pull_request.draft == false
     name: Ensure project compiles
     runs-on: ubuntu-latest
     steps:
       - name: Compile
-        uses: catalystsquad/action-compile-go@v1
+        uses: catalystcommunity/action-compile-go@v1
         with:
           go-version: ~1.22

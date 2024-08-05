@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	sf "github.com/catalystsquad/salesforce-bulk-exporter/internal/salesforce"
+	sf "github.com/catalystcommunity/salesforce-bulk-exporter/internal/salesforce"
 	"github.com/urfave/cli/v2"
 )
 
